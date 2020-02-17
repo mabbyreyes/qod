@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/quotes")
+@ExposesResourceFor(Quote.class)
 public class QuoteController {
 
 private final QuoteRepository quoteRepository;
@@ -41,10 +43,7 @@ private final SourceRepository sourceRepository;
       produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Quote> post(@RequestBody Quote quote) {
     quoteRepository.save(quote);
-    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-        .path("/{id}")
-        .build(quote.getId());
-    return ResponseEntity.created(location).body(quote);
+    return ResponseEntity.created(quote.getHref()).body(quote);
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,6 +53,9 @@ private final SourceRepository sourceRepository;
 
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public Iterable<Quote> search(@RequestParam("q") String fragment) {
+    if(fragment.length() < 3) {
+      throw new SearchTermTooShortException();
+    }
     return quoteRepository.getAllByTextContainsOrderByTextAsc(fragment);
   }
 
