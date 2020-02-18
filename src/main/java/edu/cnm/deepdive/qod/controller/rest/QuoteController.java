@@ -1,5 +1,6 @@
-package edu.cnm.deepdive.qod.controller;
+package edu.cnm.deepdive.qod.controller.rest;
 
+import edu.cnm.deepdive.qod.controller.SearchTermTooShortException;
 import edu.cnm.deepdive.qod.model.entity.Quote;
 import edu.cnm.deepdive.qod.model.entity.Source;
 import edu.cnm.deepdive.qod.service.QuoteRepository;
@@ -53,16 +54,27 @@ private final SourceRepository sourceRepository;
 
   @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
   public Iterable<Quote> search(@RequestParam("q") String fragment) {
-    if(fragment.length() < 3) {
+    if (fragment.length() < 3) {
       throw new SearchTermTooShortException();
     }
     return quoteRepository.getAllByTextContainsOrderByTextAsc(fragment);
   }
 
+  @GetMapping(value = "/random", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Quote getRandom() {
+    return quoteRepository.getRandom().get();
+  }
+
+  @GetMapping(value = "/random", produces = MediaType.TEXT_PLAIN_VALUE)
+  public String getRandomPlain() {
+    return getRandom().getText();
+  }
+
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Quote get(@PathVariable UUID id) {
+  public Quote get(@PathVariable UUID id) {
     return quoteRepository.findById(id).get();
   }
+
 
   @PutMapping(value = "/{id}",
       consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
