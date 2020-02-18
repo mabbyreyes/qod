@@ -1,6 +1,7 @@
 package edu.cnm.deepdive.qod.controller.html;
 
 import edu.cnm.deepdive.qod.service.QuoteRepository;
+import javax.print.attribute.standard.Media;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -27,4 +28,9 @@ public class QuotePageController {
     return "random";
   }
 
+  @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+  public String getAll(Model model) {
+    model.addAttribute("quotes", repository.getAllByOrderByCreatedDesc());
+    return "list";
+  }
 }
