@@ -27,7 +27,7 @@ public class QuotePageController {
     model.addAttribute("quote", repository.getRandom().get());
     return "random";
   }
-
+// takes model object and puts things in it. Spring sees data in it. WE return view template.
   @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
   public String getAll(Model model) {
     model.addAttribute("quotes", repository.getAllByOrderByCreatedDesc());

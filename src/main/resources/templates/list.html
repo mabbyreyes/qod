@@ -9,10 +9,12 @@
 
 <body>
 
+<!--If it doesnt have collection, it would fail.-->
 <ul>
   <li th:each="quote: ${quotes}">
-    <p>&ldquo;<span th:text="${quote.getText()}"></span>&rdquo;</p>
-    <p>Source: <span th:text="${(quote.getSource() != null) ? quote.getSource().getName() : '(Unknown)'}"></span></p>
+    <p>&ldquo;<span th:text="${quote.text}"></span>&rdquo;</p>
+    <!-- Elvis operator (?:) ternary. if ones not true, it goes to the next statement. -->
+    <p>Source: <span th:text="${quote?.source?.name} ?: '(Unknown)'"></span></p>
   </li>
 </ul>
 
